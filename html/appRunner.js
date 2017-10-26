@@ -33,7 +33,7 @@ function buildBoard(){
         for(j = 0; j < size; j++)
         {
             context.beginPath();
-            context.rect(i * 48, j * 48, 48, 48);
+            context.rect(i * 160, j * 160, 160, 160);
             context.fillStyle = board[i][j];
             context.fill();
             context.stroke();
@@ -69,8 +69,8 @@ function handleCanvasClick(event){
     event.stopPropagation();
     event.preventDefault();
     
-    var x = Math.floor(deltaX/48);
-    var y = Math.floor(deltaY/48);
+    var x = Math.floor(deltaX/160);
+    var y = Math.floor(deltaY/160);
 
     console.log("square position : (" + x  + ", " + y + ")");
 
