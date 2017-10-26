@@ -10,7 +10,7 @@ arrays act like rows with the index acts like the column
 
 the board is square so there are the same number of cols as rows
 */
-var size = 10;
+var size = 3;
 
 function buildBoard(){
 
