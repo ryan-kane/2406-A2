@@ -1,8 +1,14 @@
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
 
-//where the mouse is
-var deltaX, deltaY;
+//objects that will be sent back to the server
+var Person = {token : null};
+var Board = [
+    ["white", "white", "white"],
+    ["white", "white", "white"], 
+    ["white", "white", "white"]];
+
+var pollingTimer;
 
 /*
 the board will be a an array of arrays like a grid where the 
@@ -21,7 +27,7 @@ function buildBoard(){
         board[i] = new Array;
         for(j = 0; j < size; j++)
         {
-            board[i][j] = "white";
+            board[i][j] = Board[i][j];
         }
     }
 
@@ -48,8 +54,20 @@ by contacting the server
 -user has to have selected a colour
 */
 function handleRegister(){
-    //add code here
-    console.log("Hello");
+    //send the chosen player token
+
+    //receive answer and player identity
+    if(document.getElementById("radio_Blue").checked){
+        Person.token = "Blue";
+        sendObj = {text : "register", Person : Person};
+        POSTToServer(JSON.stringify(sendObj));
+    }else if(document.getElementById("radio_Orange").checked){
+        Person.token = "Orange";
+        sendObj = {text : "register", Person : Person};
+        POSTToServer(JSON.stringify(sendObj));
+    }else{
+        document.getElementById("warning").innerHTML = "Please select a Colour"
+    }
 }
 
 /*
@@ -62,45 +80,67 @@ function handleCanvasClick(event){
     
     rect = canvas.getBoundingClientRect();
 
-    //mouse position
-    deltaX = event.clientX - rect.left;
-    deltaY = event.clientY - rect.top;
+    //mouse position    
     
+    var x = Math.floor((event.clientX - rect.left)/160);
+    var y = Math.floor((event.clientY - rect.top)/160);
+
     event.stopPropagation();
     event.preventDefault();
     
-    var x = Math.floor(deltaX/160);
-    var y = Math.floor(deltaY/160);
-
     console.log("square position : (" + x  + ", " + y + ")");
 
-    //JSON object containing the
-    var position = {x : deltaX, y : deltaY};
+    //object to send to server
 
+    var sendObj = {Person : Person,
+                    Move : [x, y],
+                    text : "Player Move"};
 
-    /*
+    document.getElementById("warning").innerHTML = "Playing Move...";
+    POSTToServer(JSON.stringify(sendObj));
+}
+
+function POSTToServer(sendObj){
     var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function()
-    {
-        if(this.readyState == 4 && this.status == 200)
-        {
-            console.log(this.responseText);
+    xhttp.onreadystatechange = function(){
+        if(this.readyState == 4 && this.status == 200){
+            response = JSON.parse(this.responseText);
+            console.log("response: " + this.responseText);
+            if(response.text) document.getElementById("warning").innerHTML = response.text;
+            Person = response.Person;
+            Board = response.Board;
+            buildBoard();
         }
     }
-    console.log(position);
-    JSONPosition = JSON.stringify(position);
-    console.log(JSONPosition);
+    console.log("sendObj" + sendObj);
     xhttp.open("POST", '/', true);
-    xhttp.send(JSONPosition);
-    */
+    xhttp.send(sendObj);
+}
+
+function reset(){
+    document.getElementById("warning").innerHTML = "resetting...";
+    sendObj = {text : "reset",
+                Person : Person};
+    POSTToServer(JSON.stringify(sendObj));
+}
+
+function handleUpdate(){
+    console.log("polling update...");
+    sendObj = {text : "update",
+                Person : Person};
+    POSTToServer(JSON.stringify(sendObj));
+    
 }
 
 document.addEventListener('DOMContentLoaded', function(){
     //user chooses a colour
-    document.getElementById('register').addEventListener('onclick', handleRegister);
+    document.getElementById('btn_register').addEventListener('click', handleRegister);
 
+    //resets game
+    document.getElementById("btn_reset").addEventListener('click', reset);
     //user clicks the canvas
     canvas.addEventListener('click', handleCanvasClick);
-    buildBoard();
+
+    pollingTimer = setInterval(handleUpdate, 1000); //one second
 
 });

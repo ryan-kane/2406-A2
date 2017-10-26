@@ -14,10 +14,12 @@
         <script type="text/javascript" src="appRunner.js"></script>
         
         <form>
-            <input type="radio" name="colour" id="radio_red" value="Red">Red<br>
-            <input type="radio" name="colour" id="radio_blue" value="Blue">Blue<br>
-            <input type="radio" name="colour" id="radio_green" value="Green">Green<br>
-            <input type="button" name="select" id="register" value="Select Colour" onclick="handleRegister()">
+            <p>Choose your player token</p>
+            <input type="radio" name="token" id="radio_Blue" value="Blue">Blue<br>
+            <input type="radio" name="token" id="radio_Orange" value="Orange">Orange<br>
+            <input type="button" name="select" id="btn_register" value="Select"><br>
+            <div id="warning"></div><br>
         </form>
+        <input type="button" name="Reset" id="btn_reset" value="RESET">
     </body>
 </html>

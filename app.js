@@ -4,6 +4,17 @@ var fs = require('fs');
 
 ROOT_DIR = 'html';
 
+var People = [];
+
+var Board = [
+    ["white", "white", "white"],
+    ["white", "white", "white"], 
+    ["white", "white", "white"]];
+    
+var info = "";    
+
+var turn = 0;
+
 var MIME_TYPES = {
     'css': 'text/css',
     'gif': 'image/gif',
@@ -29,6 +40,11 @@ var get_mime = function(filename) {
     return MIME_TYPES['txt'];
 };
 
+function win(){
+    //logic for if the game is over
+    //return who won the game of if its a draw
+    return false;
+}
 
 var server = http.createServer((request, response)=>{
 	
@@ -54,22 +70,74 @@ var server = http.createServer((request, response)=>{
 		   var dataObj = JSON.parse(receivedData);
            console.log('received data object: ', dataObj);
            console.log('type: ', typeof dataObj);
-		   //Here we can decide how to process the data object and what
-		   //object to send back to client.
-		   //FOR NOW EITHER JUST PASS BACK AN OBJECT
-		   //WITH "text" PROPERTY 
-		   
-		   //TO DO: return the words array that the client requested
-		   //if it exists
+           console.log("USER REQUEST: " + dataObj.text);	
+           
+           //what are they trying to do
+           var whosTurn = People[turn % People.length];
+           if(win()){
+               info = "somebody won"
+           }else{
 
-		   console.log("USER REQUEST: " + dataObj.text );		   
-		   var returnObj = {};
-		   returnObj.text = 'Hello';
+            if(dataObj.text == "Player Move"){
+                //if they have a token
+                if(dataObj.Person.token != null && dataObj.Person.token == whosTurn){
+                    posX = dataObj.Move[0];
+                    posY = dataObj.Move[1];
+                    //check space on the Board
+                    if(Board[posX][posY] == "white"){
+                        Board[posX][posY] = dataObj.Person.token;
+                        info = "good move, Player " + ((turn % People.length)+1) + "'s turn";
+                        turn++;
+                    }else{
+                        info = "that space is already taken";
+                    }
+                }else{
+                    if(dataObj.Person.token != whosTurn) info = "not your turn";
+                    if (dataObj.Person.token == null) info = "please select a Colour first";
+                    
+                }
+            }else if(dataObj.text == "register"){
+                //for registering
+                //the person already registered can switch if there is only one player
+                if(People.length < 2){
+                    People.push(dataObj.Person.token);
+                    info = "Player " + People.length + " is now Playing as " + dataObj.Person.token;                
+                }else{
+                    info = "the game has 2 players";
+                    dataObj.Person.token = null;
+                }
+
+            }else if(dataObj.text == "update"){
+                info = null;
+            }else if(dataObj.text == "reset"){
+                for(i = 0; i < 3; i++){
+                    for(j = 0; j < 3; j++){
+                        Board[i][j] = "white";
+                    }
+                }
+            }
+
+            //check if they won
+            if(win()){
+                info = "somebody won";
+            }
+        }
+           var returnObj = {text : info,
+                            Person : dataObj.Person,
+                            Board : Board};
+            console.log(returnObj);
 		   		   
 		   //object to return to client
            response.writeHead(200, {'Content-Type': MIME_TYPES['json']});  
            response.end(JSON.stringify(returnObj)); //send just the JSON object
-		}
+        }
+        
+
+
+
+
+
+
         if(request.method == "GET"){
 	        //handle GET requests as static file requests
 	        var filePath = ROOT_DIR + urlObj.pathname;
