@@ -55,18 +55,22 @@ by contacting the server
 */
 function handleRegister(){
     //send the chosen player token
-
-    //receive answer and player identity
-    if(document.getElementById("radio_Blue").checked){
-        Person.token = "Blue";
-        sendObj = {text : "register", Person : Person};
-        POSTToServer(JSON.stringify(sendObj));
-    }else if(document.getElementById("radio_Orange").checked){
-        Person.token = "Orange";
-        sendObj = {text : "register", Person : Person};
-        POSTToServer(JSON.stringify(sendObj));
+    //check if they are already registered
+    if(Person.token != null){
+        
     }else{
-        document.getElementById("warning").innerHTML = "Please select a Colour"
+        //receive answer and player identity
+        if(document.getElementById("radio_Blue").checked){
+            Person.token = "Blue";
+            sendObj = {text : "register", Person : Person};
+            POSTToServer(JSON.stringify(sendObj));
+        }else if(document.getElementById("radio_Orange").checked){
+            Person.token = "Orange";
+            sendObj = {text : "register", Person : Person};
+            POSTToServer(JSON.stringify(sendObj));
+        }else{
+            document.getElementById("warning").innerHTML = "Please select a Colour"
+        }
     }
 }
 
@@ -107,7 +111,16 @@ function POSTToServer(sendObj){
             response = JSON.parse(this.responseText);
             console.log("response: " + this.responseText);
             if(response.text) document.getElementById("warning").innerHTML = response.text;
+            if(response.text == "reset"){
+                document.getElementById("warning").innerHTML = "";
+                document.getElementById("who").innerHTML = "";
+            }
             Person = response.Person;
+            if(Person.token != null){
+                document.getElementById("who").innerHTML = "You are " + Person.token;                            
+            }else{
+                document.getElementById("who").innerHTML = "";
+            }
             Board = response.Board;
             buildBoard();
         }
@@ -122,6 +135,8 @@ function reset(){
     sendObj = {text : "reset",
                 Person : Person};
     POSTToServer(JSON.stringify(sendObj));
+    document.getElementById("warning").innerHTML = "";
+    document.getElementById("who").innerHTML = "";
 }
 
 function handleUpdate(){

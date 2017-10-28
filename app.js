@@ -86,40 +86,48 @@ var server = http.createServer((request, response)=>{
                     //check space on the Board
                     if(Board[posX][posY] == "white"){
                         Board[posX][posY] = dataObj.Person.token;
-                        info = "good move, Player " + ((turn % People.length)+1) + "'s turn";
+                        info = "good move";
                         turn++;
                     }else{
                         info = "that space is already taken";
                     }
                 }else{
-                    if(dataObj.Person.token != whosTurn) info = "not your turn";
-                    if (dataObj.Person.token == null) info = "please select a Colour first";
-                    
+                    if(dataObj.Person.token != whosTurn){
+                        info = "not your turn";
+                    }else if (dataObj.Person.token == null) {
+                        info = "please select a Colour first";
+                    }
                 }
             }else if(dataObj.text == "register"){
                 //for registering
                 //the person already registered can switch if there is only one player
                 if(People.length < 2){
-                    People.push(dataObj.Person.token);
-                    info = "Player " + People.length + " is now Playing as " + dataObj.Person.token;                
+                    if(People.includes(dataObj.Person.token)){
+                        info = "that colour is taken";
+                        Person = {token : null};
+                    }else{
+                        People.push(dataObj.Person.token);
+                        info = null;                
+                    }
                 }else{
                     info = "the game has 2 players";
-                    dataObj.Person.token = null;
+                    dataObj.Person = {token : null};
                 }
 
             }else if(dataObj.text == "update"){
-                info = null;
+                if(People.length != 2){
+                    info = "waiting for players to join";
+                }else{
+                    info = "Player " + People[((turn % People.length)+1)] + "'s turn";    
+                }
             }else if(dataObj.text == "reset"){
                 for(i = 0; i < 3; i++){
                     for(j = 0; j < 3; j++){
                         Board[i][j] = "white";
                     }
                 }
-            }
-
-            //check if they won
-            if(win()){
-                info = "somebody won";
+                People = [];
+                info = "reset";
             }
         }
            var returnObj = {text : info,
