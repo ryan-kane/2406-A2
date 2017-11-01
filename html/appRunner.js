@@ -31,8 +31,9 @@ function buildBoard(board, movingString){
     //create the moving string on the canvas
     context.fillStyle = "black";
     context.strokeStyle = "black";
-    //context.font = "30px Arial";
-	movingString.stringWidth = context.measureText(movingString.word).width
+    context.font = "30px Arial";
+    movingString.stringWidth = context.measureText(movingString.word).width
+    console.log(movingString.stringWidth);
 	context.fillText(movingString.word, movingString.x, movingString.y);
 	
 }
@@ -136,6 +137,6 @@ document.addEventListener('DOMContentLoaded', function(){
     //user clicks the canvas
     canvas.addEventListener('click', handleCanvasClick);
 
-    pollingTimer = setInterval(handleUpdate, 400); //one second
+    pollingTimer = setInterval(handleUpdate, 50); //one second
 
 });

@@ -17,8 +17,8 @@ var sendObj = { 'Player' : null,
                                 'y' : 100,
                                 'xDirection' : 1, //+1 for leftwards, -1 for rightwards
                                 'yDirection' : 1, //+1 for downwards, -1 for upwards
-                                'stringWidth' : 50, //will be updated when drawn
-                                'stringHeight' : 24
+                                'stringWidth' : 145, //will be updated when drawn
+                                'stringHeight' : 35
                             }
             };
 Players = [];
@@ -133,6 +133,8 @@ function reset(){
     sendObj.info = "";
     Players = [];
     turn = 0;
+    sendObj.movingString.visible = false;
+    sendObj.movingString.word = "";
 }
 
 
