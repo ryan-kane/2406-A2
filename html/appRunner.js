@@ -137,6 +137,6 @@ document.addEventListener('DOMContentLoaded', function(){
     //user clicks the canvas
     canvas.addEventListener('click', handleCanvasClick);
 
-    pollingTimer = setInterval(handleUpdate, 50); //one second
+    pollingTimer = setInterval(handleUpdate, 1000); //one second
 
 });

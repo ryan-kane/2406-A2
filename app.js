@@ -79,10 +79,10 @@ function playerMove(playerObj){
         if(sendObj.Board[posX][posY] == "white"){
             sendObj.Board[posX][posY] = playerObj.Player;
             sendObj.info = "good move";
-            if(playerObj.Player == "Orange"){
-                turn = Players.indexOf("Blue");
+            if(turn == 0){
+                turn = 1;
             }else{
-                turn = Players.indexOf("Orange");
+                turn = 0;
             }
         }else{
             sendObj.info = "that space is already taken";
@@ -191,7 +191,7 @@ var server = http.createServer((request, response)=>{
             if(dataObj.text == "reset"){
                 reset();
             }
-            console.log("\n");
+            console.log("\n \n \n \n \n");
             console.log("Player : " + sendObj.Player);
             console.log("Board : " + sendObj.Board);
             console.log("Players : " + Players);
