@@ -93,6 +93,7 @@ function handleCanvasClick(event){
     POSTToServer(JSON.stringify(sendObj));
 }
 
+//resets the game in the client and the server
 function reset(){
     sendObj.text = "reset";
     sendObj.Player = null;
@@ -102,12 +103,16 @@ function reset(){
     document.getElementById("who").innerHTML = "";
 }
 
+//polls the server for new information about the game
 function handleUpdate(){
     console.log("polling update...");
     sendObj.text = "update";
     POSTToServer(JSON.stringify(sendObj));
 }
 
+//posts the sendObj to the server
+//receives the information from the server to 
+//update the html page
 function POSTToServer(JSONsendObj){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){

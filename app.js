@@ -52,6 +52,7 @@ var get_mime = function(filename) {
     return MIME_TYPES['txt'];
 };
 
+//utilize the module we created to check if the game is over based on the board
 function win(){
     //logic for if the game is over
     //return who won the game of if its a draw
@@ -67,15 +68,16 @@ function win(){
     }
 }
 
+//checks the players move and then updates the board
 function playerMove(playerObj){
     sendObj.Player = playerObj.Player;    
-    //if they have a colour
+    //check if they have a colour
     if(playerObj.Player != null && playerObj.Player == Players[turn]){
         
         posX = playerObj.Move[0]
         posY = playerObj.Move[1];
 
-        //check space on the Board
+        //check the space on the Board
         if(sendObj.Board[posX][posY] == "white"){
             sendObj.Board[posX][posY] = playerObj.Player;
             sendObj.info = "good move";
@@ -97,6 +99,8 @@ function playerMove(playerObj){
     }
 }
 
+//registers a player to a colour
+//once a player is registered they cannot re-register
 function register(playerObj){
     //for registering
     //the person already registered can switch if there is only one player
@@ -115,6 +119,8 @@ function register(playerObj){
     }
 }
 
+//handles the constant polling from different clients and
+//keeps track of the registered players
 function update(playerObj){
     sendObj.Player = playerObj.Player;
     if(Players.length == 0){
@@ -127,6 +133,8 @@ function update(playerObj){
     }     
 }
 
+//resets the game so that it can be played again
+//unregisters all the players
 function reset(){
     sendObj.Player = null;
     sendObj.Board = [["white", "white","white"], ["white", "white","white"], ["white", "white","white"]];
@@ -137,7 +145,8 @@ function reset(){
     sendObj.movingString.word = "";
 }
 
-
+//this is the static server, the code for this and the get_mime() function
+//were taken from the 2406 class notes http://people.scs.carleton.ca/~comp2406/notes/
 var server = http.createServer((request, response)=>{
 	
 	var urlObj = url.parse(request.url, true, false);	
